@@ -1,0 +1,31 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:14.1-alpine
+    restart: always
+    networks:
+      - films-app
+    env_file:
+      - postgres.env
+    ports:
+      - '5432:5432'
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ../pg_data:/var/lib/postgresql/data
+      - ../postgresql:/docker-entrypoint-initdb.d
+
+  mongo:
+    image: mongo:latest
+    env_file:
+      - mongo.env
+    networks:
+      - films-app
+    ports:
+      - 27017:27017
+    volumes:
+      - ../mongo/data/db:/data/db
+
+networks:
+  films-app:
+    driver: bridge

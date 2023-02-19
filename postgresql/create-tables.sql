@@ -8,6 +8,13 @@ CREATE TABLE gender(
                        value TEXT NOT NULL
 );
 
+CREATE TABLE film_type(
+                          id SERIAL PRIMARY KEY,
+                          name TEXT NOT NULL
+);
+
+
+
 CREATE TABLE film(
                      id SERIAL PRIMARY KEY,
                      name TEXT NOT NULL,
@@ -15,7 +22,8 @@ CREATE TABLE film(
                      description TEXT,
                      year_of_release INT,
                      rating float,
-                     lenght INT
+                     lenght INT,
+					 film_type_id INT REFERENCES film_type(id)
 );
 
 CREATE  TABLE  film_country(
@@ -31,7 +39,7 @@ CREATE TABLE media_file_type(
 
 CREATE TABLE media_file_extension(
                                      id SERIAL PRIMARY KEY,
-                                     extension INT NOT NULL,
+                                     extension TEXT NOT NULL,
                                      media_file_type_id INT REFERENCES  media_file_type(id) NOT NULL
 );
 
@@ -62,16 +70,23 @@ CREATE TABLE person(
                        gender_id INT REFERENCES gender(id) NOT NULL
 );
 
+CREATE TABLE film_person(
+				id SERIAL PRIMARY KEY,
+				film_id INT REFERENCES film(id) NOT NULL,
+				person_id INT REFERENCES person(id) NOT NULL,
+				speciality_id INT REFERENCES speciality(id) NOT NULL
+)
+
 CREATE TABLE person_speciality(
                                   id SERIAL PRIMARY KEY,
                                   person_id INT REFERENCES person(id) NOT NULL,
                                   speciality_id INT REFERENCES speciality(id) NOT NULL
 );
 
-CREATE TABLE person_image(
+CREATE TABLE person_media_file(
                              id SERIAL PRIMARY KEY,
-                             actor_id INT REFERENCES person (id) NOT NULL,
-                             image_id INT REFERENCES film (id) NOT NULL
+                             person_id INT REFERENCES person (id) NOT NULL,
+                             media_file_id INT REFERENCES film (id) NOT NULL
 );
 
 CREATE TABLE genre(
@@ -85,16 +100,7 @@ CREATE TABLE film_genre(
                            genre_id INT REFERENCES  genre(id) NOT NULL
 );
 
-CREATE TABLE film_type(
-                          id SERIAL PRIMARY KEY,
-                          name TEXT NOT NULL
-);
 
-CREATE TABLE film_film_type(
-                               id SERIAL PRIMARY KEY,
-                               film_id INT REFERENCES  film(id) NOT NULL,
-                               film_type_id INT REFERENCES film_type(id) NOT NULL
-);
 
 CREATE TABLE role(
                      id SERIAL PRIMARY KEY,
@@ -120,4 +126,4 @@ CREATE TABLE film_review(
                             start INT NOT NULL
 );
 
-
+ъ

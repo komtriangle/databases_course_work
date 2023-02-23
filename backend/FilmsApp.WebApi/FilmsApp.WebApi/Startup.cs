@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http.Features;
+﻿using FilmsApp.Data;
+using FilmsApp.WebApi.Configuration;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore;
 
 namespace FilmsApp.WebApi
 {
@@ -15,7 +18,13 @@ namespace FilmsApp.WebApi
             services.AddControllers();
             services.AddSwaggerGen();
 
-           
+            var appSettings = _configuration.GetSection(nameof(AppSettings));
+
+            services.Configure<AppSettings>(appSettings);
+
+            services.AddDbContextFactory<FilmsContext>(options => options
+                        .UseNpgsql(appSettings[nameof(AppSettings.PosrtgresConntectionString)]));
+
 
             //var appSettings = _configuration.GetSection("AppSettings");
             //services.Configure<AppSettings>(appSettings);

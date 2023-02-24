@@ -2,7 +2,12 @@ db.createUser(
     {
         user: "films_user",
         pwd: "films_password",
-        roles: ["root"]
+        roles: [
+            {
+                role: "readWrite",
+                db: "films_db"
+            }
+        ]
     }
 );
 

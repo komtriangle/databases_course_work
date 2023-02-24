@@ -72,25 +72,25 @@ namespace FilmsApp.WebApi.Services
 
 		private static FilterDefinition<MongoFilm> FindByName(string searchQuery)
 		{
-			var result = Builders<MongoFilm>.Filter.Eq(f => f.Name, searchQuery);
+			var result = Builders<MongoFilm>.Filter.Eq(f => f.Name.ToLower(), searchQuery?.ToLower());
 			return result;
 		}
 
 		private static FilterDefinition<MongoFilm> FindByStartOfName(string searchQuery)
 		{
-			var result = Builders<MongoFilm>.Filter.Where(f => f.Name.StartsWith(searchQuery));
+			var result = Builders<MongoFilm>.Filter.Where(f => f.Name.ToLower().StartsWith(searchQuery.ToLower()));
 			return result;
 		}
 
 		private static FilterDefinition<MongoFilm> FindByContaintOfName(string searchQuery)
 		{
-			var result = Builders<MongoFilm>.Filter.Where(f => f.Name.Contains(searchQuery));
+			var result = Builders<MongoFilm>.Filter.Where(f => f.Name.ToLower().Contains(searchQuery.ToLower()));
 			return result;
 		}
 
 		private static FilterDefinition<MongoFilm> FindByContaintOfDescription(string searchQuery)
 		{
-			var result = Builders<MongoFilm>.Filter.Where(f => f.Description.Contains(searchQuery));
+			var result = Builders<MongoFilm>.Filter.Where(f => f.Description.ToLower().Contains(searchQuery.ToLower()));
 			return result;
 		}
 	}

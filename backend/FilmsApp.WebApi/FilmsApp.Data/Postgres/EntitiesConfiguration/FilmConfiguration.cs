@@ -33,7 +33,7 @@ namespace FilmsApp.Data.EntitiesConfiguration
 
 			builder
 				.Property(x => x.YearOfRelease)
-				.HasJsonPropertyName("year_of_release");
+				.HasColumnName("year_of_release");
 
 			builder
 				.Property(x => x.Rating)

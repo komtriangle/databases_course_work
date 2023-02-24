@@ -7,8 +7,8 @@ namespace FilmsApp.Data.Entities
 		public int Id { get; set; }
 		public string Name { get; set; }
 		public int Growth { get; set; }
-		public DateTime DateBirth { get; set; }
-		public DateTime DateDeath { get; set; }
+		public DateTime? DateBirth { get; set; }
+		public DateTime? DateDeath { get; set; }
 		public string BirthPlace { get; set;}
 		public int GenderId { get; set; }
 		public virtual Gender Gender { get; set; }

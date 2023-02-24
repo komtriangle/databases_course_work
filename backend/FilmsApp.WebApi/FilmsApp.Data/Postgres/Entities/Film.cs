@@ -7,7 +7,7 @@
 		public string EngName { get; set; }
 		public string Description { get; set; }
 		public int YearOfRelease { get; set; }
-		public float Rating { get; set; }
+		public double Rating { get; set; }
 		/// <summary>
 		/// Продолжительность фильма в минутах
 		/// </summary>

@@ -37,7 +37,7 @@ namespace FilmsApp.Data.EntitiesConfiguration
 
 			builder
 				.Property(x => x.BirthPlace)
-				.HasColumnName("birthPlace");
+				.HasColumnName("birthplace");
 
 			builder
 				.Property(x => x.GenderId)

@@ -25,6 +25,14 @@ services:
       - 27017:27017
     volumes:
       - ../mongo/data/db:/data/db
+      - ../mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  nginx:
+    image: nginx:latest
+    ports:
+      - '8001:80'
+    restart: always
+    volumes:
+      - ../media-content:/usr/share/nginx/html
 
 networks:
   films-app:

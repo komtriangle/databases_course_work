@@ -31,6 +31,8 @@ namespace FilmsApp.Data.Mapper
 				.ToArray();
 
 			mongoFilm.Persons = film.People
+				.Take(5)
+				.OrderByDescending(p => p.Person.Films.Count)
 				.Select(person => new MongoFilmPerson
 				{
 					Name = person.Person?.Name,

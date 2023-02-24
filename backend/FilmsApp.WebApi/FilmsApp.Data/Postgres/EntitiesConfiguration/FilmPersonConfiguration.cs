@@ -35,7 +35,7 @@ namespace FilmsApp.Data.EntitiesConfiguration
 			builder
 				.HasOne(x => x.Film)
 				.WithMany(x => x.People)
-				.HasForeignKey(x => x.PersonId);
+				.HasForeignKey(x => x.FilmId);
 
 			builder
 				.HasOne(x => x.Person)

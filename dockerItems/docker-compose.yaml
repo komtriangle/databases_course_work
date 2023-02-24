@@ -34,6 +34,17 @@ services:
     volumes:
       - ../media-content:/usr/share/nginx/html
 
+  backend:
+    image: ${DOCKER_REGISTRY-}xmas-api
+    restart: always
+    build:
+      context: ../backend/FilmsApp.WebApi
+      dockerfile: FilmsApp.WebApi/Dockerfile
+    networks:
+      - films-app
+    ports:
+      - '8155:80'
+
 networks:
   films-app:
     driver: bridge

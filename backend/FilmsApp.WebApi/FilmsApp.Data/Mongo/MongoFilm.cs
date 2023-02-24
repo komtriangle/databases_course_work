@@ -12,7 +12,6 @@ namespace FilmsApp.Data.Mongo
 		public int YearOfRelease { get; set; }
 		public double Rating { get; set; }
 		public int Length { get; set; }
-		public int FilmTypeId { get; set; }
 		public string FilmType { get; set; }
 
 		public MongoFilmPerson[] Persons { get; set; }

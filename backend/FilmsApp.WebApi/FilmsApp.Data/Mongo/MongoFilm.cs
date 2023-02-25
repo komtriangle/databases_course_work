@@ -20,5 +20,7 @@ namespace FilmsApp.Data.Mongo
 
 		public string[] Countries { get; set; }
 
+		public string PosterUrl { get; set; }
+
 	}
 }

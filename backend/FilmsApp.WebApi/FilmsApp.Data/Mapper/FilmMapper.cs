@@ -41,6 +41,11 @@ namespace FilmsApp.Data.Mapper
 				.Where(p => p.Name != null && p.Speciality != null)
 				.ToArray();
 
+			mongoFilm.PosterUrl = film.MediaFiles
+				.Where(x => x.Type == 1)
+				.FirstOrDefault()
+				?.MediaFile?.Path;
+
 
 			return mongoFilm;
 		}

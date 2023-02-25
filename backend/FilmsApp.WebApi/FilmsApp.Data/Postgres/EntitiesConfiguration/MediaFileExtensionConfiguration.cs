@@ -21,8 +21,11 @@ namespace FilmsApp.Data.EntitiesConfiguration
 
 			builder
 				.Property(x => x.Extension)
-				.HasColumnName("extension")
-				.ValueGeneratedOnAdd();
+				.HasColumnName("extension");
+
+			builder
+				.Property(x => x.MediaFileTypeId)
+				.HasColumnName("media_file_type_id");
 
 			builder.HasOne(x => x.MediaFileType)
 				.WithMany(x => x.MediaFileExtensions)

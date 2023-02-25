@@ -1,45 +1,37 @@
-﻿using FilmsApp.Data.Mongo;
+﻿using FilmsApp.Data;
+using FilmsApp.Data.Entities;
+using FilmsApp.Data.Mongo;
+using FilmsApp.WebApi.DTO;
+using FilmsApp.WebApi.DTO.Extensions;
 using FilmsApp.WebApi.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
-using System.Linq.Expressions;
 
 namespace FilmsApp.WebApi.Services
 {
 	public class FilmService : IFilmService
 	{
 		private readonly IMongoRepositiory _mongoRepositiory;
+		private readonly IDbContextFactory<FilmsContext> _dbContextFactory;
 
-		public FilmService(IMongoRepositiory mongoRepositiory)
+		public FilmService(IMongoRepositiory mongoRepositiory,
+			IDbContextFactory<FilmsContext> dbContextFactory)
 		{
 			_mongoRepositiory = mongoRepositiory ??
 				throw new ArgumentNullException(nameof(mongoRepositiory));
-		}
-		public async Task<MongoFilm> GetFilmAsync(int id)
-		{
-			MongoFilm film = null;
-
-			try
-			{
-			    film = await _mongoRepositiory.GetFilmByIdAsync(id);
-			}
-			catch (Exception ex)
-			{
-				throw;
-			}
-
-			if(film == null)
-			{
-				throw new FilmNotFoundException();
-			}
-
-			return film;
-
+			_dbContextFactory = dbContextFactory ??
+				throw new ArgumentNullException(nameof(_dbContextFactory));
 		}
 
 		public async Task<MongoFilm[]> SearchFilms(string searchQuery, int count = 20, int offset = 0)
 		{
 			List<MongoFilm> films = new List<MongoFilm>();
 
+			if(string.IsNullOrEmpty(searchQuery))
+			{
+				films = await _mongoRepositiory.FindFilmByFilterAsync(EmptyFind(count, offset));
+				return films.ToArray();
+			}
 
 			try
 			{
@@ -47,17 +39,20 @@ namespace FilmsApp.WebApi.Services
 
 				if(films.Count < count + offset)
 				{
-					films.AddRange(await _mongoRepositiory.FindFilmByFilterAsync(FindByStartOfName(searchQuery)));
+					List<MongoFilm> filmsToAdd = await _mongoRepositiory.FindFilmByFilterAsync(FindByStartOfName(searchQuery));
+					films.AddRange(filmsToAdd.Where(x => !films.Any(y => y.Id == x.Id)));
 				}
 
 				if(films.Count < count + offset)
 				{
-					films.AddRange(await _mongoRepositiory.FindFilmByFilterAsync(FindByContaintOfName(searchQuery)));
+					List<MongoFilm> filmsToAdd = await _mongoRepositiory.FindFilmByFilterAsync(FindByStartOfName(searchQuery));
+					films.AddRange(filmsToAdd.Where(x => !films.Any(y => y.Id == x.Id)));
 				}
 
 				if(films.Count < count + offset)
 				{
-					films.AddRange(await _mongoRepositiory.FindFilmByFilterAsync(FindByContaintOfDescription(searchQuery)));
+					List<MongoFilm> filmsToAdd = await _mongoRepositiory.FindFilmByFilterAsync(FindByStartOfName(searchQuery));
+					films.AddRange(filmsToAdd.Where(x => !films.Any(y => y.Id == x.Id)));
 				}
 
 				return films.Skip(offset).Take(count).ToArray();
@@ -67,7 +62,26 @@ namespace FilmsApp.WebApi.Services
 				throw;
 			}
 
-			
+		}
+
+		public async Task<FilmDTO> GetFilmAsync(int id)
+		{
+			Film film;
+			using(FilmsContext context = await _dbContextFactory.CreateDbContextAsync())
+			{
+				film = await context.Films
+					.FirstAsync(x => x.Id == id);
+
+				return film?.ToDTO();
+			}
+
+		}
+
+		private static FilterDefinition<MongoFilm> EmptyFind(int count, int offset)
+		{
+			var builder = Builders<MongoFilm>.Filter;
+			var result = builder.And(builder.Gt(x => x.Id, offset), builder.Lt(x => x.Id, offset+count));
+			return result;
 		}
 
 		private static FilterDefinition<MongoFilm> FindByName(string searchQuery)

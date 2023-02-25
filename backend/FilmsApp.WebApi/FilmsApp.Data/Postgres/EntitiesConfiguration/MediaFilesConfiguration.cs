@@ -24,6 +24,10 @@ namespace FilmsApp.Data.EntitiesConfiguration
 				.HasColumnName("path");
 
 			builder
+				.Property(x => x.MediaFileExtensionId)
+				.HasColumnName("media_file_extension_id");
+
+			builder
 				.HasOne(x => x.MediaFileExtension)
 				.WithMany(x => x.MediaFiles)
 				.HasForeignKey(x => x.MediaFileExtensionId);

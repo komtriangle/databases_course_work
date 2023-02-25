@@ -40,19 +40,22 @@ namespace FilmsApp.WebApi.Services
 				if(films.Count < count + offset)
 				{
 					List<MongoFilm> filmsToAdd = await _mongoRepositiory.FindFilmByFilterAsync(FindByStartOfName(searchQuery));
-					films.AddRange(filmsToAdd.Where(x => !films.Any(y => y.Id == x.Id)));
+					filmsToAdd = filmsToAdd.Where(x => !films.Any(y => y.Id == x.Id)).ToList();
+					films.AddRange(filmsToAdd);
 				}
 
 				if(films.Count < count + offset)
 				{
 					List<MongoFilm> filmsToAdd = await _mongoRepositiory.FindFilmByFilterAsync(FindByStartOfName(searchQuery));
-					films.AddRange(filmsToAdd.Where(x => !films.Any(y => y.Id == x.Id)));
+					filmsToAdd = filmsToAdd.Where(x => !films.Any(y => y.Id == x.Id)).ToList();
+					films.AddRange(filmsToAdd);
 				}
 
 				if(films.Count < count + offset)
 				{
 					List<MongoFilm> filmsToAdd = await _mongoRepositiory.FindFilmByFilterAsync(FindByStartOfName(searchQuery));
-					films.AddRange(filmsToAdd.Where(x => !films.Any(y => y.Id == x.Id)));
+					filmsToAdd = filmsToAdd.Where(x => !films.Any(y => y.Id == x.Id)).ToList();
+					films.AddRange(filmsToAdd);
 				}
 
 				return films.Skip(offset).Take(count).ToArray();

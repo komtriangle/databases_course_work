@@ -4,6 +4,7 @@ using FilmsApp.Data.Mongo;
 using FilmsApp.WebApi.DTO;
 using FilmsApp.WebApi.DTO.Extensions;
 using FilmsApp.WebApi.Exceptions;
+using FilmsApp.WebApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 

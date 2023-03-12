@@ -2,7 +2,7 @@
 using FilmsApp.Data.Mongo;
 using FilmsApp.WebApi.DTO;
 
-namespace FilmsApp.WebApi.Services
+namespace FilmsApp.WebApi.Services.Interfaces
 {
 	public interface IFilmService
 	{

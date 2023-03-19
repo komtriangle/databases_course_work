@@ -10,6 +10,8 @@ namespace FilmsApp.Data.Postgres.Entities
 	{
 		public int Id { get; set; }
 		public string Email { get; set; }
-		public string Name { get; set; }
+
+		public virtual ICollection<UserRoles> Roles { get; set; }
+
 	}
 }

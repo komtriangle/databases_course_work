@@ -25,10 +25,19 @@ namespace FilmsApp.WebApi.DTO.Extensions
 					.Where(x => x != null)
 					.ToArray(),
 				Films = person?.Films?
-					.Select(x => x.Film?.ToDTO())
-					.Where(x => x != null)
+					.Select(film =>
+					{
+						return new FilmDTO
+						{
+							Id = film.Id,
+							Name = film.Film?.Name,
+							EngName = film.Film?.EngName,
+							Rating = film.Film.Rating
+						};
+					})
 					.ToArray()
 			};
+					
 		}
 	}
 }

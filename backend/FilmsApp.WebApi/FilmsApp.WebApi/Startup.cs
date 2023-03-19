@@ -2,6 +2,8 @@
 using FilmsApp.Data.Configuration;
 using FilmsApp.Data.Mongo;
 using FilmsApp.WebApi.Configuration;
+using FilmsApp.WebApi.Middleware;
+using FilmsApp.WebApi.Middlewarer;
 using FilmsApp.WebApi.Services;
 using FilmsApp.WebApi.Services.Interfaces;
 using Google.Apis.Auth.AspNetCore3;
@@ -9,6 +11,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.PeopleService.v1;
 using Google.Apis.PeopleService.v1.Data;
 using Google.Apis.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -51,26 +54,15 @@ namespace FilmsApp.WebApi
 			services.AddTransient<IFilmService, FilmService>();
 			services.AddTransient<ICountryService, CountryService>();
 			services.AddTransient<IFilmTypeService, FilmTypeService>();
+			services.AddTransient<IActorService, ActorService>();
+			services.AddTransient<IUserService, UserService>();
 
 
 			var appSettings = _configuration.GetSection("AppSettings");
 			services.Configure<AppSettings>(appSettings);
 
-			//services.AddAuthentication(options =>
-			//{
-			//	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-			//})
-		 //  .AddJwtBearer(options =>
-		 //  {
-			//   options.Authority = "https://accounts.google.com";
-			//   options.Audience = _configuration["Authentication:Google:ClientId"];
-		 //  });
-		   //.AddGoogleOpenIdConnect(options =>
-		   //{
-			  // options.ClientId = _configuration["Authentication:Google:ClientId"];
-			  // options.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
-			  // options.SaveTokens = true;
-		   //});
+			services.AddAuthentication("Bearer")
+				.AddScheme<AuthenticationSchemeOptions, GoogleJwtHandler>("Bearer", null);
 
 			services.AddControllers();
 		}
@@ -86,9 +78,8 @@ namespace FilmsApp.WebApi
 
 			app.UseRouting();
 
-			//app.UseAuthentication();
-
-			//app.UseAuthorization();
+			app.UseAuthentication();
+			app.UseAuthorization();
 
 
 			app.UseEndpoints(endpoints =>

@@ -1,15 +1,10 @@
-﻿using FilmsApp.Data;
-using FilmsApp.Data.Entities;
-using FilmsApp.WebApi.DTO;
-using FilmsApp.WebApi.Services.Interfaces;
+﻿using FilmsApp.WebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-//using CountryDTO = FilmsApp.WebApi.DTO.CountryDTO;
 
 namespace FilmsApp.WebApi.Controllers
 {
 	[Route("[controller]")]
-	public class CountriesController: Controller
+	public class CountriesController : Controller
 	{
 
 		private readonly ICountryService _countryService;

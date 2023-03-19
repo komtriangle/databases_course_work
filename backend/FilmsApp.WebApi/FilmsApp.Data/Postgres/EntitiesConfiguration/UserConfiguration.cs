@@ -9,7 +9,7 @@ namespace FilmsApp.Data.Postgres.EntitiesConfiguration
 		public void Configure(EntityTypeBuilder<User> builder)
 		{
 			builder
-				.ToTable("users");
+				.ToTable("app_user");
 
 			builder
 				.HasKey(x => x.Id);
@@ -23,6 +23,11 @@ namespace FilmsApp.Data.Postgres.EntitiesConfiguration
 				.Property(x => x.Email)
 				.HasColumnName("email")
 				.HasColumnType("text");
+
+			builder
+				.HasMany(x => x.Roles)
+				.WithOne(x => x.User)
+				.HasForeignKey(x => x.UserId);
 		}
 	}
 }

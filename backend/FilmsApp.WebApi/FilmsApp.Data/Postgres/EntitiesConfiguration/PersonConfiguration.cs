@@ -21,7 +21,8 @@ namespace FilmsApp.Data.EntitiesConfiguration
 
 			builder
 				.Property(x => x.Name)
-				.HasColumnName("name");
+				.HasColumnName("name")
+				.UseCollation("pg_catalog.\"C\"");
 
 			builder
 				.Property(x => x.Growth)

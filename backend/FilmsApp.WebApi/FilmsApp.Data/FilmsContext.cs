@@ -1,5 +1,7 @@
 ﻿using FilmsApp.Data.Entities;
 using FilmsApp.Data.EntitiesConfiguration;
+using FilmsApp.Data.Postgres.Entities;
+using FilmsApp.Data.Postgres.EntitiesConfiguration;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilmsApp.Data
@@ -28,6 +30,10 @@ namespace FilmsApp.Data
 		public DbSet<FilmType> FilmType { get; set; }
 		public DbSet<FilmPerson> FilmPeople { get; set; }
 
+		public DbSet<User> Users { get; set; }
+		public DbSet<Role> Roles { get; set; }
+		public DbSet<UserRoles> UserRoles { get; set; }
+
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			base.OnModelCreating(builder);
@@ -48,6 +54,8 @@ namespace FilmsApp.Data
 			builder.ApplyConfiguration(new FilmGenreConfiguration());
 			builder.ApplyConfiguration(new FilmTypeConfiguration());
 			builder.ApplyConfiguration(new FilmPersonConfiguration());
+			builder.ApplyConfiguration(new UserConfiguration());
+			builder.ApplyConfiguration(new UserRolesConfiguration());
 		}
 	}
 }

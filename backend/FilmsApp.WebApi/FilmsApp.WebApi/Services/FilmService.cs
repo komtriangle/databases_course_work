@@ -174,6 +174,8 @@ namespace FilmsApp.WebApi.Services
 					}
 				};
 
+				await context.Films.AddAsync(film);
+
 				try
 				{
 					await context.SaveChangesAsync();

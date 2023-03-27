@@ -37,12 +37,6 @@ namespace FilmsApp.WebApi.Controllers
 			_logger = logger;
 		}
 
-		[HttpGet("Test")]
-		public ActionResult Test ()
-		{
-			_logger.LogInformation("Тестовый лог");
-			return Ok("Ok");
-		}
 
 		[HttpGet("SearchFilms")]
 		public async Task<IActionResult> SearchFilms(string? searchQuery = null, int count = 20, int offset = 0)
@@ -117,14 +111,17 @@ namespace FilmsApp.WebApi.Controllers
 					await file.CopyToAsync(stream);
 				}
 
-				return Ok(filePath);
+				return Ok(new
+				{
+					filePath = filePath,
+				});
 			}
 			catch(Exception ex)
 			{
-
+				_logger.LogError(ex, $"Ошибка во время загрузки видео");
+				return BadRequest("Ошибка во время загрузка видео");
 			}
 
-			return Ok();
 		}
 	}
 }

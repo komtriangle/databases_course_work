@@ -41,6 +41,8 @@ services:
     build:
       context: ../backend/FilmsApp.WebApi
       dockerfile: FilmsApp.WebApi/Dockerfile
+    volumes:
+      - ../media-content:/media-content
     networks:
       - films-app
     ports:

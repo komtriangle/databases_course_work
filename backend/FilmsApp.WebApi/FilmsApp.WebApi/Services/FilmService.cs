@@ -138,17 +138,15 @@ namespace FilmsApp.WebApi.Services
 				}
 
 
-				MediaFile trailer = new MediaFile()
-				{
-					Path = createFilmDTO.TrailerFileName,
-					MediaFileExtension = trailerExtension
-				};
 
-				await context.MediaFiles.AddAsync(trailer);
 
 				FilmMediaFile filmTrailer = new FilmMediaFile()
 				{
-					MediaFile = trailer
+					MediaFile = new MediaFile()
+					{
+						Path = createFilmDTO.TrailerFileName,
+						MediaFileExtension = trailerExtension
+					}
 				};
 
 				Film film = new Film()

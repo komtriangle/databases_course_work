@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using FilmsApp.Data.Mapper;
+using FilmsApp.WebApi.DTO.Extensions;
 
 namespace FilmsApp.WebApi.Services
 {
@@ -253,7 +254,7 @@ namespace FilmsApp.WebApi.Services
 				film = await context.Films
 					.FirstAsync(x => x.Id == id);
 
-				return film?.ToMongoModel();
+				return film?.ToDTO();
 			}
 
 		}

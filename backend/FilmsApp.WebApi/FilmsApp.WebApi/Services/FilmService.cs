@@ -301,7 +301,7 @@ namespace FilmsApp.WebApi.Services
 
 			string fileExtension = Path.GetExtension(trailerPath);
 
-			return fileExtension == "mp4" || fileExtension == "mov";
+			return fileExtension == ".mp4" || fileExtension == ".mov";
 
 		}
 

@@ -106,15 +106,12 @@ namespace FilmsApp.WebApi.Controllers
 				}
 
 				var filePath = $"{Guid.NewGuid()}-{file.FileName}";
-				using(var stream = new FileStream(filePath, FileMode.Create))
+				using(var stream = new FileStream(Path.Combine(_appSettings.MediaContnetDirectory, filePath), FileMode.Create))
 				{
 					await file.CopyToAsync(stream);
 				}
 
-				return Ok(new
-				{
-					filePath = filePath,
-				});
+				return Ok(filePath);
 			}
 			catch(Exception ex)
 			{

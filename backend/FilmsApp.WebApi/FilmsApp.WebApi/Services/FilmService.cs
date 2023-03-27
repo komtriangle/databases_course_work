@@ -137,16 +137,14 @@ namespace FilmsApp.WebApi.Services
 					throw new Exception($"Не найдено расширение файла для трейлера: {createFilmDTO.TrailerFileName}");
 				}
 
-
-
-
 				FilmMediaFile filmTrailer = new FilmMediaFile()
 				{
 					MediaFile = new MediaFile()
-					{
+					{ 
 						Path = createFilmDTO.TrailerFileName,
 						MediaFileExtension = trailerExtension
-					}
+					},
+					Type = 3,
 				};
 
 				Film film = new Film()

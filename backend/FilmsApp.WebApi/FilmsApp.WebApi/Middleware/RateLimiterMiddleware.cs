@@ -11,16 +11,21 @@ namespace FilmsApp.WebApi.Middleware
         private readonly IDistributedCache _cache;
         private readonly DistributedCacheEntryOptions _distributedCacheEntryOptions;
         private readonly RateLimiterConfig _rateLimiterConfig;
+        private readonly ILogger<RateLimiterMiddleware> _logger;
 
 
         public RateLimiterMiddleware (RequestDelegate next,
             IDistributedCache distributedCache,
-            IOptions<RateLimiterConfig> rateLimiterConfigOptions)
+            IOptions<RateLimiterConfig> rateLimiterConfigOptions,
+			ILogger<RateLimiterMiddleware> logger)
         {
             _next = next;
 
             _cache = distributedCache ??
-                    throw new ArgumentNullException(nameof(distributedCache));
+                 throw new ArgumentNullException(nameof(distributedCache));
+
+            _logger = logger ??
+                throw new ArgumentNullException(nameof(logger));
 
             if (rateLimiterConfigOptions?.Value == null)
             {
@@ -38,6 +43,7 @@ namespace FilmsApp.WebApi.Middleware
         public async Task InvokeAsync (HttpContext context)
         {
             string clientIPAddress = context.Connection.RemoteIpAddress.ToString();
+            _logger.LogInformation($"Запрос от пользователя и IP: {clientIPAddress}");
 
             List<DateTime> clientRequests = await GetClientRequsts(clientIPAddress);
 

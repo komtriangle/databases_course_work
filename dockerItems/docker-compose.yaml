@@ -46,6 +46,26 @@ services:
     ports:
       - '8155:80'
 
+  redis:
+    image: "bitnami/redis"
+    ports:
+      - "6379:6379"
+    env_file:
+      - redis.env
+    volumes:
+      - ../redis/redis-data:/var/lib/redis
+      #- ../redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - films-app
+
+  seq:
+    image: datalust/seq:latest
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5340:80"
+      - "5341:5341"
+
 networks:
   films-app:
     driver: bridge

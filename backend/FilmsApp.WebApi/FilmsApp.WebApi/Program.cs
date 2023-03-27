@@ -1,3 +1,5 @@
+using Serilog;
+
 namespace FilmsApp.WebApi
 {
 
@@ -10,7 +12,14 @@ namespace FilmsApp.WebApi
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+                .ConfigureLogging((hostBuilderContext, configureLogging) =>
+                {
+                    Log.Logger = new LoggerConfiguration()
+                        .ReadFrom.Configuration(hostBuilderContext.Configuration)
+                        .CreateLogger();
+                })
+                .UseSerilog()
+                .ConfigureWebHostDefaults (webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });

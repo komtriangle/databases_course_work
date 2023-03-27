@@ -16,28 +16,37 @@ namespace FilmsApp.WebApi.Controllers
 	{
 
 		private readonly IFilmService _filmService;
-		private readonly IMongoRepositiory mongoRepositiory;
-		private readonly IDbContextFactory<FilmsContext> dbContextFactory;
+		private readonly IMongoRepositiory _mongoRepositiory;
+		private readonly IDbContextFactory<FilmsContext> _dbContextFactory;
 		private readonly AppSettings _appSettings;
+		private readonly ILogger<FilmsController> _logger;
 		public FilmsController(
 			IFilmService filmService,
 			IMongoRepositiory mongoRepositiory,
 			IDbContextFactory<FilmsContext> dbContextFactory,
-			IOptions<AppSettings> settingsOptions)
+			IOptions<AppSettings> settingsOptions,
+			ILogger<FilmsController> logger)
 		{
 			_filmService = filmService ??
 				throw new ArgumentNullException(nameof(filmService));
 
 			_appSettings = settingsOptions.Value;
 
-			this.mongoRepositiory = mongoRepositiory;
-			this.dbContextFactory = dbContextFactory;
+			_mongoRepositiory = mongoRepositiory;
+			_dbContextFactory = dbContextFactory;
+			_logger = logger;
+		}
+
+		[HttpGet("Test")]
+		public ActionResult Test ()
+		{
+			_logger.LogInformation("Тестовый лог");
+			return Ok("Ok");
 		}
 
 		[HttpGet("SearchFilms")]
 		public async Task<IActionResult> SearchFilms(string? searchQuery = null, int count = 20, int offset = 0)
 		{
-			Console.WriteLine(User.Identity.Name);
 			return  Json(await _filmService.SearchFilms(searchQuery, count, offset));
 		}
 
@@ -68,13 +77,13 @@ namespace FilmsApp.WebApi.Controllers
 		[HttpGet("FillMongo")]
 		public async Task<IActionResult> FillMongo()
 		{
-			using(FilmsContext context = dbContextFactory.CreateDbContext())
+			using(FilmsContext context = _dbContextFactory.CreateDbContext())
 			{
 				var films = context.Films.ToArray().Select(x => x.ToMongoModel());
 
 				foreach(var film in films)
 				{
-					await mongoRepositiory.CreateFilmAsync(film);
+					await _mongoRepositiory.CreateFilmAsync(film);
 					Console.WriteLine(film.Name);
 				}
 			}

@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 
@@ -64,6 +65,19 @@ namespace FilmsApp.WebApi
 			services.AddAuthentication("Bearer")
 				.AddScheme<AuthenticationSchemeOptions, GoogleJwtHandler>("Bearer", null);
 
+			RedisConfiguration redisConfiguration = _configuration.GetSection("RedisConfig")
+				.Get<RedisConfiguration>();
+
+			services.AddStackExchangeRedisCache(options => {
+				options.ConfigurationOptions = new ConfigurationOptions
+				{
+					EndPoints = { redisConfiguration.EndPoints },
+					Password = redisConfiguration.Password
+				};
+			});
+
+			services.Configure<RateLimiterConfig>(_configuration.GetSection("RateLimiterConfig"));
+
 			services.AddControllers();
 		}
 
@@ -76,6 +90,7 @@ namespace FilmsApp.WebApi
 
 			app.UseHttpsRedirection();
 
+			app.UseMiddleware<RateLimiterMiddleware>();
 			app.UseRouting();
 
 			app.UseAuthentication();

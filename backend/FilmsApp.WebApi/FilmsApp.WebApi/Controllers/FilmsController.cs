@@ -87,10 +87,17 @@ namespace FilmsApp.WebApi.Controllers
 		}
 
 		[HttpPost("CreateFilm")]
-		public IActionResult CreateFilm([FromBody] CreateFilmDTO film)
+		public async Task<IActionResult> CreateFilm([FromBody] CreateFilmDTO film)
 		{
+			try
+			{
+				return Ok(await _filmService.CreateFilm(film));
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
 
-			return Ok("ОК");
 		}
 
 		[HttpPost("DownloadVideo")]

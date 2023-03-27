@@ -7,6 +7,7 @@
 		public string Description { get; set; }
 		public int YearOfRelease { get; set; }
 		public int Length { get; set; }
+		public string TrailerFileName { get; set; }
 		public int FilmTypeId { get; set; }
 		public int[] CountriesIds { get; set; }
 		public int[] GenresIds { get; set; }

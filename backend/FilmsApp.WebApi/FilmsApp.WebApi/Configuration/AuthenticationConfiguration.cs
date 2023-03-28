@@ -8,4 +8,5 @@
 	public class GoogleAuthConfiguration
 	{
 		public string ClientId { get; set; }
+	}
 }

@@ -28,7 +28,7 @@ namespace FilmsApp.WebApi.Middleware
             _userService = userService;
             _logger = logger.CreateLogger<GoogleJwtHandler>();
             _authConfiguration = authConfiguration?.Value
-                ?? throw ArgumentNullException(nameof(authConfiguration));
+                ?? throw new ArgumentNullException(nameof(authConfiguration));
 		}
 
 		protected override async Task<AuthenticateResult> HandleAuthenticateAsync()

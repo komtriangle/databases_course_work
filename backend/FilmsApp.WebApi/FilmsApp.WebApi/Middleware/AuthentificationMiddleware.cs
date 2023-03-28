@@ -32,7 +32,7 @@ namespace FilmsApp.WebApi.Middlewarer
             }
             catch (Exception ex)
 			{
-                _logger.LogError(ex, "Ошибка во время проверки авторизации")
+                _logger.LogError(ex, "Ошибка во время проверки авторизации");
 			}
           
             await _next(context);

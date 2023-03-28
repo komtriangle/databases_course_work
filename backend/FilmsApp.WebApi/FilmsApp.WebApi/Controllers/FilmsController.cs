@@ -4,10 +4,10 @@ using FilmsApp.Data.Mongo;
 using FilmsApp.WebApi.Configuration;
 using FilmsApp.WebApi.DTO;
 using FilmsApp.WebApi.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using FilmsApp.WebApi.Exceptions;
 
 namespace FilmsApp.WebApi.Controllers
 {
@@ -20,7 +20,7 @@ namespace FilmsApp.WebApi.Controllers
 		private readonly IDbContextFactory<FilmsContext> _dbContextFactory;
 		private readonly AppSettings _appSettings;
 		private readonly ILogger<FilmsController> _logger;
-		public FilmsController(
+		public FilmsController (
 			IFilmService filmService,
 			IMongoRepositiory mongoRepositiory,
 			IDbContextFactory<FilmsContext> dbContextFactory,
@@ -39,29 +39,41 @@ namespace FilmsApp.WebApi.Controllers
 
 
 		[HttpGet("SearchFilms")]
-		public async Task<IActionResult> SearchFilms(string? searchQuery = null, int count = 20, int offset = 0)
+		public async Task<IActionResult> SearchFilms (string? searchQuery = null, int count = 20, int offset = 0)
 		{
-			return  Json(await _filmService.SearchFilms(searchQuery, count, offset));
+			_logger.LogInformation($"Запрос от пользователя: {User.GetUserName()} на поиска фильмов");
+			try
+			{
+				return Json(await _filmService.SearchFilmsAsync(searchQuery, count, offset));
+			}
+			catch(Exception ex)
+			{
+				_logger.LogError(ex, "Ошибка во время поиска фильмов");
+				return BadRequest("Оштбка во время поиска фильмов");
+			}
 		}
 
-		[HttpGet("GetById{id}")]
+		[HttpGet("GetById/{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 
-		public async Task<IActionResult> GetFilm(int id)
+		public async Task<IActionResult> GetFilm (int id)
 		{
+			_logger.LogInformation($"Запрос от пользователя: {User.GetUserName()} на получение фильма с Id: {id}");
+			
 			try
 			{
 				FilmDTO film = await _filmService.GetFilmAsync(id);
 
-				if(film == null)
+				if (film == null)
 				{
 					return NotFound($"Фильм с Id: {id} не найден");
 				}
 
 				return Json(film);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
+				_logger.LogInformation(ex, $"Ошибка во время поиска фильма с Id: {id}");
 				return BadRequest("Ошибка во время поиска фильма");
 			}
 
@@ -69,13 +81,13 @@ namespace FilmsApp.WebApi.Controllers
 
 
 		[HttpGet("FillMongo")]
-		public async Task<IActionResult> FillMongo()
+		public async Task<IActionResult> FillMongo ()
 		{
-			using(FilmsContext context = _dbContextFactory.CreateDbContext())
+			using (FilmsContext context = _dbContextFactory.CreateDbContext())
 			{
 				var films = context.Films.ToArray().Select(x => x.ToMongoModel());
 
-				foreach(var film in films)
+				foreach (var film in films)
 				{
 					await _mongoRepositiory.CreateFilmAsync(film);
 					Console.WriteLine(film.Name);
@@ -87,14 +99,17 @@ namespace FilmsApp.WebApi.Controllers
 		}
 
 		[HttpPost("CreateFilm")]
-		public async Task<IActionResult> CreateFilm([FromBody] CreateFilmDTO film)
+		public async Task<IActionResult> CreateFilm ([FromBody] CreateFilmDTO film)
 		{
+			_logger.LogInformation($"Запрос на создание фильма от пользователя: {User.GetUserName()}");
+
 			try
 			{
-				return Ok(await _filmService.CreateFilm(film));
+				return Ok(await _filmService.CreateFilmAsync(film));
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError(ex, "Ошибка во время создания фильма");
 				return BadRequest(ex.Message);
 			}
 
@@ -103,24 +118,26 @@ namespace FilmsApp.WebApi.Controllers
 		[HttpPost("DownloadVideo")]
 		[RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
 		[DisableRequestSizeLimit]
-		public async Task<IActionResult> PostVideo([FromForm] IFormFile file)
+		public async Task<IActionResult> PostVideo ([FromForm] IFormFile file)
 		{
+			_logger.LogInformation($"Запрос от пользователя: {User.GetUserName()} на загрузку видео");
+
 			try
 			{
-				if(file == null || file.Length == 0 || !file.ContentType.Contains("video"))
+				if (file == null || file.Length == 0 || !file.ContentType.Contains("video"))
 				{
 					return BadRequest("Некорректный файл");
 				}
 
 				var filePath = $"{Guid.NewGuid()}-{file.FileName}";
-				using(var stream = new FileStream(Path.Combine(_appSettings.MediaContnetDirectory, filePath), FileMode.Create))
+				using (var stream = new FileStream(Path.Combine(_appSettings.MediaContnetDirectory, filePath), FileMode.Create))
 				{
 					await file.CopyToAsync(stream);
 				}
 
 				return Ok(filePath);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				_logger.LogError(ex, $"Ошибка во время загрузки видео");
 				return BadRequest("Ошибка во время загрузка видео");

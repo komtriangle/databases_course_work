@@ -6,10 +6,14 @@ namespace FilmsApp.WebApi.Middlewarer
 	public class AuthentificationMiddleware
 	{
         private readonly RequestDelegate _next;
+        private readonly ILogger<AuthentificationMiddleware> _logger;
 
-        public AuthentificationMiddleware(RequestDelegate next)
+        public AuthentificationMiddleware(RequestDelegate next,
+			ILogger<AuthentificationMiddleware> logger)
         {
             _next = next;
+            _logger = logger ??
+                throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -28,7 +32,7 @@ namespace FilmsApp.WebApi.Middlewarer
             }
             catch (Exception ex)
 			{
-
+                _logger.LogError(ex, "Ошибка во время проверки авторизации")
 			}
           
             await _next(context);

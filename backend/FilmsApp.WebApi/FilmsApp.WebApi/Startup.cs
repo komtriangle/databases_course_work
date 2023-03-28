@@ -62,6 +62,9 @@ namespace FilmsApp.WebApi
 			var appSettings = _configuration.GetSection("AppSettings");
 			services.Configure<AppSettings>(appSettings);
 
+			var authSettings = _configuration.GetSection("AuthenticationConfiguration");
+			services.Configure<AuthenticationConfiguration>(authSettings);
+
 			services.AddAuthentication("Bearer")
 				.AddScheme<AuthenticationSchemeOptions, GoogleJwtHandler>("Bearer", null);
 

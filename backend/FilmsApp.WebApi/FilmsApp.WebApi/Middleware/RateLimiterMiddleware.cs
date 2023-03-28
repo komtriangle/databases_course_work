@@ -42,23 +42,32 @@ namespace FilmsApp.WebApi.Middleware
 
         public async Task InvokeAsync (HttpContext context)
         {
-            string clientIPAddress = context.Connection.RemoteIpAddress.ToString();
-            _logger.LogInformation($"Запрос от пользователя и IP: {clientIPAddress}");
+            try
+            {
+				string clientIPAddress = context.Connection.RemoteIpAddress.ToString();
 
-            List<DateTime> clientRequests = await GetClientRequsts(clientIPAddress);
+				_logger.LogInformation($"Запрос от пользователя с IP: {clientIPAddress}");
 
-            clientRequests = clientRequests.Where(r => r > DateTime.UtcNow.Add(-_rateLimiterConfig.WindowLength))
-                .ToList();
+				List<DateTime> clientRequests = await GetClientRequsts(clientIPAddress);
 
-            if(clientRequests.Count >= _rateLimiterConfig.MaxRequestsPerWindow)
-			{
-                context.Response.StatusCode = 429;
-                return;
+				clientRequests = clientRequests.Where(r => r > DateTime.UtcNow.Add(-_rateLimiterConfig.WindowLength))
+					.ToList();
+
+				if (clientRequests.Count >= _rateLimiterConfig.MaxRequestsPerWindow)
+				{
+					_logger.LogWarning($"Пользователем с IP: {clientIPAddress} нарушен литим запросов");
+					context.Response.StatusCode = 429;
+					return;
+				}
+
+				clientRequests.Add(DateTime.UtcNow);
+
+				await SetClientRequests(clientIPAddress, clientRequests);
+			}
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка во время работы rate-limiter-а");
             }
-
-            clientRequests.Add(DateTime.UtcNow);
-
-            await SetClientRequests(clientIPAddress, clientRequests);
 
             await _next(context);
         }

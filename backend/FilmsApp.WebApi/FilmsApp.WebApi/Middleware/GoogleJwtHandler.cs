@@ -1,4 +1,5 @@
-﻿using FilmsApp.WebApi.Services.Interfaces;
+﻿using FilmsApp.WebApi.Configuration;
+using FilmsApp.WebApi.Services.Interfaces;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
@@ -13,16 +14,21 @@ namespace FilmsApp.WebApi.Middleware
 	{
 
         private readonly IUserService _userService;
-        private readonly Object _locker = new Object();
+        private readonly ILogger<GoogleJwtHandler> _logger;
+        private readonly AuthenticationConfiguration _authConfiguration;
 
-        public GoogleJwtHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, 
+		public GoogleJwtHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, 
             ILoggerFactory logger, 
             UrlEncoder encoder, 
             ISystemClock clock,
-            IUserService userService)
+            IUserService userService,
+            IOptions<AuthenticationConfiguration> authConfiguration)
             : base(options, logger, encoder, clock)
 		{
             _userService = userService;
+            _logger = logger.CreateLogger<GoogleJwtHandler>();
+            _authConfiguration = authConfiguration?.Value
+                ?? throw ArgumentNullException(nameof(authConfiguration));
 		}
 
 		protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -41,7 +47,7 @@ namespace FilmsApp.WebApi.Middleware
 			{
                 GoogleJsonWebSignature.ValidationSettings settings = new GoogleJsonWebSignature.ValidationSettings();
 
-                settings.Audience = new List<string>() { "1006300932308-v47i976nval32vprp2586355p4n4fuib.apps.googleusercontent.com" };
+                settings.Audience = new List<string>() { _authConfiguration.Google.ClientId };
 
                 GoogleJsonWebSignature.Payload payload = GoogleJsonWebSignature.ValidateAsync(headerValue.ToString(),
                         settings).Result;
@@ -54,15 +60,17 @@ namespace FilmsApp.WebApi.Middleware
                 
                 }
 
-
                 var claims = new[] { new Claim(payload.Email, "username found in db") };
                 var identity = new ClaimsIdentity(claims, Scheme.Name);
                 var principal = new ClaimsPrincipal(identity);
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);
+
+                _logger.LogInformation($"Пользователь: {payload.Email} успешно авторизирован");
                 return AuthenticateResult.Success(ticket);
             }
             catch(Exception ex)
 			{
+                _logger.LogError(ex, "Ошибка во врема авторизации пользователя");
                 return AuthenticateResult.NoResult();
 
             }

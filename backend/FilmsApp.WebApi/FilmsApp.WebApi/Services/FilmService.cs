@@ -34,7 +34,7 @@ namespace FilmsApp.WebApi.Services
 				throw new ArgumentNullException(nameof(logger));
 		}
 
-		public async Task<int> CreateFilm (CreateFilmDTO createFilmDTO)
+		public async Task<int> CreateFilmAsync (CreateFilmDTO createFilmDTO)
 		{
 			using (FilmsContext context = await _dbContextFactory.CreateDbContextAsync())
 			{
@@ -137,6 +137,8 @@ namespace FilmsApp.WebApi.Services
 					throw new Exception($"Не найдено расширение файла для трейлера: {createFilmDTO.TrailerFileName}");
 				}
 
+				using var transaction = context.Database.BeginTransaction();
+
 				FilmMediaFile filmTrailer = new FilmMediaFile()
 				{
 					MediaFile = new MediaFile()
@@ -152,6 +154,7 @@ namespace FilmsApp.WebApi.Services
 					Name = createFilmDTO.Name,
 					EngName = createFilmDTO.EngName,
 					Description = createFilmDTO.Description,
+					YearOfRelease = createFilmDTO.YearOfRelease,
 					FilmType = filmType,
 					Genres = genres
 						.Select(genre => new FilmGenre()
@@ -193,14 +196,17 @@ namespace FilmsApp.WebApi.Services
 				catch (Exception ex)
 				{
 					_logger.LogError(ex, "Ошибка во время сохранения фильма в Mongo");
+					await transaction.RollbackAsync();
 					throw new Exception("Ошибка во время сохранения фильма");
 				}
+
+				await transaction.CommitAsync();
 
 				return film.Id;
 			}
 		}
 
-		public async Task<MongoFilm[]> SearchFilms (string searchQuery, int count = 20, int offset = 0)
+		public async Task<MongoFilm[]> SearchFilmsAsync (string searchQuery, int count = 20, int offset = 0)
 		{
 			List<MongoFilm> films = new List<MongoFilm>();
 

@@ -4,6 +4,6 @@ namespace FilmsApp.WebApi.Services.Interfaces
 {
 	public interface IActorService
 	{
-		Task<IEnumerable<PersonDTO>> GetActors(string searchQuary, int count, int offset);
+		Task<IEnumerable<PersonDTO>> GetActorsAsync(string searchQuary, int count, int offset);
 	}
 }

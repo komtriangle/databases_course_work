@@ -16,7 +16,7 @@ namespace FilmsApp.WebApi.Services
 		{
 			_dbContextFactory = dbContextFactory;
 		}
-		public async Task<IEnumerable<PersonDTO>> GetActors(string searchQuery, int count, int offset)
+		public async Task<IEnumerable<PersonDTO>> GetActorsAsync(string searchQuery, int count, int offset)
 		{
 
 

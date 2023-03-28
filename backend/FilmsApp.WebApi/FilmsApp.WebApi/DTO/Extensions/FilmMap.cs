@@ -14,7 +14,8 @@ namespace FilmsApp.WebApi.DTO.Extensions
 				Description = film.Description,
 				Rating = film.Rating,
 				Length = film.Length,
-				Genres = film.Genres
+				Genres = film.Genres,
+				YearOfRelease = film.YearOfRelease,
 					.Select(x => x.Genre?.ToDTO())
 					.Where(x => x != null)
 					.ToArray(),

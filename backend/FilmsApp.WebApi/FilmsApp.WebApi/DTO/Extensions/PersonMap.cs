@@ -15,6 +15,7 @@ namespace FilmsApp.WebApi.DTO.Extensions
 				DateBirth = person.DateBirth,
 				DateDeath = person.DateDeath,
 				BirthPlace = person.BirthPlace,
+				GenderId = person.GenderId,
 				Gender = person.Gender?.ToDTO(),
 				Specialities = person?.Specialities?
 					.Select(x => x.Speciality?.ToDTO())

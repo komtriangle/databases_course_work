@@ -11,6 +11,8 @@
 		public int FilmTypeId { get; set; }
 		public int[] CountriesIds { get; set; }
 		public int[] GenresIds { get; set; }
+		public ImageDTO Poster { get; set; }
+		public ImageDTO[] FilmImages { get; set; }
 		public CreateFilmPersonDTO[] PersonDTO { get; set; }
 
 	}

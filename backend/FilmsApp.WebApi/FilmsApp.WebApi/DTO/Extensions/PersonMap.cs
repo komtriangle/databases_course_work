@@ -22,7 +22,7 @@ namespace FilmsApp.WebApi.DTO.Extensions
 					.Where(x => x != null)
 					.ToArray(),
 				MediaFiles = person?.MediaFiles?
-					.Select(x => x.MediaFile?.ToDTO())
+					.Select(x => x?.ToDTO())
 					.Where(x => x != null)
 					.ToArray(),
 				Films = person?.Films?

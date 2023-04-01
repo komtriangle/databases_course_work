@@ -9,6 +9,9 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using FilmsApp.Data.Mapper;
 using FilmsApp.WebApi.DTO.Extensions;
+using FilmsApp.Data.Enums;
+using System.Buffers.Text;
+using FilmsApp.WebApi.Helpers;
 
 namespace FilmsApp.WebApi.Services
 {
@@ -18,6 +21,7 @@ namespace FilmsApp.WebApi.Services
 		private readonly IDbContextFactory<FilmsContext> _dbContextFactory;
 		private readonly AppSettings _appSettings;
 		private readonly ILogger<FilmService> _logger;
+
 
 		public FilmService (IMongoRepositiory mongoRepositiory,
 			IDbContextFactory<FilmsContext> dbContextFactory,
@@ -132,6 +136,35 @@ namespace FilmsApp.WebApi.Services
 				MediaFileExtension trailerExtension = await context.MediaFileExtensions.FirstOrDefaultAsync(
 					mf => mf.Extension == GetExtension(createFilmDTO.TrailerFileName));
 
+				if(createFilmDTO.Poster == null)
+				{
+					throw new Exception("Не передан постер фильма");
+				}
+
+				if(!Base64Helper.IsBase64String(createFilmDTO.Poster.ImageBase64))
+				{
+					throw new Exception("Некорректное изображение постера");
+				}
+
+				var posterExtension = await context.MediaFileExtensions.FirstOrDefaultAsync(
+					mf => mf.Extension == createFilmDTO.Poster.Extension);
+
+				if (posterExtension == null)
+				{
+					throw new Exception("Некорректное расширение изображения постера");
+				}
+
+				foreach(var image in createFilmDTO.FilmImages)
+				{
+					bool validationResult = await ValidateImageDTO(context, image);
+
+					if(validationResult == false)
+					{
+						throw new Exception("Некорректно одно или более изображений из фильма");
+					}
+				}
+
+
 				if (trailerExtension == null)
 				{
 					throw new Exception($"Не найдено расширение файла для трейлера: {createFilmDTO.TrailerFileName}");
@@ -146,8 +179,36 @@ namespace FilmsApp.WebApi.Services
 						Path = createFilmDTO.TrailerFileName,
 						MediaFileExtension = trailerExtension
 					},
-					Type = 3,
+					Type = (int)FilmMediaFileType.Trailer,
 				};
+
+				FilmMediaFile filmPoster = new FilmMediaFile()
+				{
+					MediaFile = new MediaFile()
+					{
+						Path = await SaveImage(createFilmDTO.Name, createFilmDTO.Poster),
+						MediaFileExtension = posterExtension
+					},
+					Type = (int)FilmMediaFileType.Poster,
+				};
+
+				List<FilmMediaFile> filmImages = new List<FilmMediaFile>();
+
+				foreach(var filmImage in createFilmDTO.FilmImages)
+				{
+					var filmMediaFile = new FilmMediaFile()
+					{
+						MediaFile = new MediaFile()
+						{
+							Path = await SaveImage(createFilmDTO.Name, filmImage),
+							MediaFileExtension = posterExtension
+						},
+						Type = (int)FilmMediaFileType.FilmPhoto
+					};
+
+					filmImages.Add(filmMediaFile);
+				}
+
 
 				Film film = new Film()
 				{
@@ -169,11 +230,15 @@ namespace FilmsApp.WebApi.Services
 						})
 						.ToArray(),
 					People = personFilms,
-					MediaFiles = new List<FilmMediaFile>()
+					MediaFiles = filmImages.Union(new List<FilmMediaFile>()
 					{
-						filmTrailer
-					}
+						filmTrailer,
+						filmPoster,
+					})
+					.ToList()
 				};
+
+				
 
 				await context.Films.AddAsync(film);
 
@@ -307,6 +372,45 @@ namespace FilmsApp.WebApi.Services
 
 			return fileExtension == ".mp4" || fileExtension == ".mov";
 
+		}
+
+		private async Task<string> SaveImage(string filmName, ImageDTO image)
+		{
+			try
+			{
+				var fileName = $"{filmName}-{Guid.NewGuid()}{image.Extension}";
+
+				string filePath = Path.Combine(_appSettings.MediaContnetDirectory, fileName);
+				await File.WriteAllBytesAsync(filePath, Convert.FromBase64String(image.ImageBase64));
+				return fileName;
+			}
+			catch(Exception ex)
+			{
+				_logger.LogError(ex, "Ошибка во время сохранения изображений для фильма");
+				throw;
+			}
+		}
+
+		private async Task<bool> ValidateImageDTO(FilmsContext context, ImageDTO imageDTO)
+		{
+			if(imageDTO == null)
+			{
+				return false;
+			}
+
+			if (!Base64Helper.IsBase64String(imageDTO.ImageBase64))
+			{
+				return false;
+			}
+
+			var imageExtension = await context.MediaFileExtensions.FirstOrDefaultAsync(
+					mf => mf.Extension == imageDTO.Extension);
+			if (imageExtension == null)
+			{
+				return false;
+			}
+
+			return true;
 		}
 
 	}

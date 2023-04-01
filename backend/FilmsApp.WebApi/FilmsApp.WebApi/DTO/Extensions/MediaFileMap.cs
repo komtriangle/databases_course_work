@@ -4,13 +4,25 @@ namespace FilmsApp.WebApi.DTO.Extensions
 {
 	public static class MediaFileMap
 	{
-		public static MediaFileDTO ToDTO(this MediaFile mediaFile)
+		public static MediaFileDTO ToDTO(this FilmMediaFile filmMediaFile)
 		{
 			return new MediaFileDTO
 			{
-				Id = mediaFile.Id,
-				MediaFileExtension = mediaFile.MediaFileExtension.ToDTO(),
-				Path = mediaFile.Path,
+				Id = filmMediaFile.Id,
+				MediaFileExtension = filmMediaFile.MediaFile.MediaFileExtension.ToDTO(),
+				Path = filmMediaFile.MediaFile.Path,
+				Type = filmMediaFile.Type
+			};
+		}
+
+		public static MediaFileDTO ToDTO(this PersonMediaFile filmMediaFile)
+		{
+			return new MediaFileDTO
+			{
+				Id = filmMediaFile.Id,
+				MediaFileExtension = filmMediaFile.MediaFile.MediaFileExtension.ToDTO(),
+				Path = filmMediaFile.MediaFile.Path,
+				Type = 0
 			};
 		}
 	}

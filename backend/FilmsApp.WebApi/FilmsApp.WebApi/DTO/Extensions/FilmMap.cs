@@ -25,7 +25,7 @@ namespace FilmsApp.WebApi.DTO.Extensions
 					.ToArray(),
 				FilmType = film.FilmType.ToDTO(),
 				MediaFiles = film.MediaFiles
-					.Select(x => x.MediaFile?.ToDTO())
+					.Select(x => x?.ToDTO())
 					.Where(x => x != null)
 					.ToArray(),
 				FilmPeople = film.People?

@@ -130,7 +130,7 @@ namespace FilmsApp.WebApi.Controllers
 				}
 
 				var filePath = $"{Guid.NewGuid()}-{file.FileName}";
-				using (var stream = new FileStream(Path.Combine(_appSettings.MediaContnetDirectory, filePath), FileMode.Create))
+				using (var stream = new FileStream(Path.Combine(_appSettings.MediaContnetDirectory,"trailers", filePath), FileMode.Create))
 				{
 					await file.CopyToAsync(stream);
 				}

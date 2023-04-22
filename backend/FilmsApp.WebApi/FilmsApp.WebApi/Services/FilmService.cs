@@ -349,7 +349,7 @@ namespace FilmsApp.WebApi.Services
 
 		private string GetExtension (string fileName)
 		{
-			string trailerPath = Path.Combine(_appSettings.MediaContnetDirectory, fileName);
+			string trailerPath = Path.Combine(_appSettings.MediaContnetDirectory + "/trailers", fileName);
 
 			if (!File.Exists(trailerPath))
 			{
@@ -361,7 +361,7 @@ namespace FilmsApp.WebApi.Services
 
 		private bool ValidateTrailer (string fileName)
 		{
-			string trailerPath = Path.Combine(_appSettings.MediaContnetDirectory, fileName);
+			string trailerPath = Path.Combine(_appSettings.MediaContnetDirectory + "/trailers", fileName);
 
 			if (!File.Exists(trailerPath))
 			{

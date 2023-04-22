@@ -14,7 +14,7 @@ namespace FilmsApp.WebApi.Services
 			_dbContextFactory = dbContextFactory;
 		}
 
-		public async Task CreateUserAsync(string email)
+		public async Task<int> CreateUserAsync(string email)
 		{
 			try
 			{
@@ -24,6 +24,8 @@ namespace FilmsApp.WebApi.Services
 
 					await context.Users.AddAsync(user);
 					await context.SaveChangesAsync();
+
+					return user.Id;
 				}
 			}
 			catch (Exception ex)

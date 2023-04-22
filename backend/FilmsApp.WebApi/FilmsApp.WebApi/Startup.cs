@@ -63,7 +63,7 @@ namespace FilmsApp.WebApi
 			var appSettings = _configuration.GetSection("AppSettings");
 			services.Configure<AppSettings>(appSettings);
 
-			var authSettings = _configuration.GetSection("AuthenticationConfiguration");
+			var authSettings = _configuration.GetSection("Authentication");
 			services.Configure<AuthenticationConfiguration>(authSettings);
 
 			services.AddAuthentication("Bearer")

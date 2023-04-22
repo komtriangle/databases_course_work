@@ -29,6 +29,7 @@ namespace FilmsApp.WebApi.Middlewarer
                     var authHeaderValue = authHeaderValues.FirstOrDefault();
                    
                 }
+
             }
             catch (Exception ex)
 			{

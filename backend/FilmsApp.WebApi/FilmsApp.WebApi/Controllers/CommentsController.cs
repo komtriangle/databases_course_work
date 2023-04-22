@@ -24,6 +24,7 @@ namespace FilmsApp.WebApi.Controllers
 		}
 
 		[HttpPost]
+		[Authorize]
 		public async Task<IActionResult> CreateComment([FromBody] CommentDTO commentDTO)
 		{
 			try
@@ -39,6 +40,7 @@ namespace FilmsApp.WebApi.Controllers
 		}
 
 		[HttpDelete]
+		[Authorize]
 		public async Task<IActionResult> DeleteComment(int commentId)
 		{
 			try

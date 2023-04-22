@@ -6,7 +6,7 @@ namespace FilmsApp.WebApi.Services.Interfaces
 	{
 		Task<User> GetUserAsync(string email);
 
-		Task CreateUserAsync(string email);
+		Task<int> CreateUserAsync(string email);
 
 		Task<IEnumerable<Role>> GetUserRolesAsync(int id);
 

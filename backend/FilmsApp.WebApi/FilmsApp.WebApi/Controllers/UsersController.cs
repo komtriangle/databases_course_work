@@ -1,6 +1,7 @@
 ﻿using FilmsApp.WebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using FilmsApp.WebApi.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FilmsApp.WebApi.Controllers
 {
@@ -20,8 +21,16 @@ namespace FilmsApp.WebApi.Controllers
 				?? throw new ArgumentNullException(nameof(logger));
 		}
 
+		[HttpGet]
+		[Authorize]
+		public async Task<IActionResult> GetUserId()
+		{
+			return Ok(User.FindFirst("Id")?.Value);
+		}
+
 
 		[HttpGet("GetRoles")]
+		[Authorize]
 		public async  Task<IActionResult> GetUserRoles(int id)
 		{
 			_logger.LogInformation($"Запрос от пользователя: {User.GetUserName()} на получение списка ролей " +

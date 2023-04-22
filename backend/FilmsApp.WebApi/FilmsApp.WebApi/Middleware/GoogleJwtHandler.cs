@@ -52,15 +52,19 @@ namespace FilmsApp.WebApi.Middleware
                 GoogleJsonWebSignature.Payload payload = GoogleJsonWebSignature.ValidateAsync(headerValue.ToString(),
                         settings).Result;
 
+                int userId;
                 var user = await _userService.GetUserAsync(payload.Email);
 
                 if(user == null)
                 {
-                    await _userService.CreateUserAsync(payload.Email);
-                
+                    userId =await _userService.CreateUserAsync(payload.Email);
+                }
+                else
+                {
+                    userId = user.Id;
                 }
 
-                var claims = new[] { new Claim(payload.Email, "username found in db") };
+                var claims = new[] { new Claim("Email", payload.Email), new Claim("Id", userId.ToString())  };
                 var identity = new ClaimsIdentity(claims, Scheme.Name);
                 var principal = new ClaimsPrincipal(identity);
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);

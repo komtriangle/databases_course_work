@@ -1,12 +1,11 @@
 ﻿using FilmsApp.WebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Web.Http;
 using FilmsApp.WebApi.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FilmsApp.WebApi.Controllers
 {
 	[System.Web.Http.Route("[controller]")]
-	[Authorize]
 	public class ActorsController : Controller
 	{
 		private readonly IActorService _actorService;
@@ -21,7 +20,7 @@ namespace FilmsApp.WebApi.Controllers
 				?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		[Microsoft.AspNetCore.Mvc.HttpGet("GetActors")]
+		[HttpGet("GetActors")]
 		public async Task<IActionResult> GetActors(string searchQuery, int count = 20, int offset = 0)
 		{
 			_logger.LogInformation($"Запрос от пользователя: {User.GetUserName()} на получение списка актеров");

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using FilmsApp.WebApi.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FilmsApp.WebApi.Controllers
 {
@@ -99,6 +100,7 @@ namespace FilmsApp.WebApi.Controllers
 		}
 
 		[HttpPost("CreateFilm")]
+		[Authorize]
 		public async Task<IActionResult> CreateFilm ([FromBody] CreateFilmDTO film)
 		{
 			_logger.LogInformation($"Запрос на создание фильма от пользователя: {User.GetUserName()}");
@@ -118,6 +120,7 @@ namespace FilmsApp.WebApi.Controllers
 		[HttpPost("DownloadVideo")]
 		[RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
 		[DisableRequestSizeLimit]
+		[Authorize]
 		public async Task<IActionResult> PostVideo ([FromForm] IFormFile file)
 		{
 			_logger.LogInformation($"Запрос от пользователя: {User.GetUserName()} на загрузку видео");

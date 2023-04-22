@@ -21,7 +21,7 @@ namespace FilmsApp.WebApi.Controllers
 				?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		[HttpGet]
+		[HttpGet("GetId")]
 		[Authorize]
 		public async Task<IActionResult> GetUserId()
 		{

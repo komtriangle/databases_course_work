@@ -9,7 +9,7 @@ namespace FilmsApp.Data.Postgres.EntitiesConfiguration
 		public void Configure(EntityTypeBuilder<Comment> builder)
 		{
 			builder
-				.ToTable("country");
+				.ToTable("comments");
 
 			builder
 				.HasKey(x => x.Id);

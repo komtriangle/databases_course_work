@@ -30,7 +30,7 @@ namespace FilmsApp.WebApi.Controllers
 			try
 			{
 				int commentId = await _commentsService.CreateAsync(commentDTO);
-				return Ok(commentDTO);
+				return Ok(commentId);
 			}
 			catch (Exception ex)
 			{

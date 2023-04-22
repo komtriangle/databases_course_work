@@ -23,6 +23,7 @@ namespace FilmsApp.Data.Postgres.EntitiesConfiguration
 			builder
 				.Property(x => x.Text)
 				.HasColumnName("text")
+				.HasColumnType("text")
 				.IsRequired();
 
 			builder

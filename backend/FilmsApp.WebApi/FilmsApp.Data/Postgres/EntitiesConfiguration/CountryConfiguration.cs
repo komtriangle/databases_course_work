@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FilmsApp.Data.EntitiesConfiguration
 {
-	internal class CountryConfiguration : IEntityTypeConfiguration<Country>
+	internal class CountryConfiguration: IEntityTypeConfiguration<Country>
 	{
 		public void Configure(EntityTypeBuilder<Country> builder)
 		{

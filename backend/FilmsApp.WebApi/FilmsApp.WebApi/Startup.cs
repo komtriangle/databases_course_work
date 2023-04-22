@@ -57,6 +57,7 @@ namespace FilmsApp.WebApi
 			services.AddTransient<IFilmTypeService, FilmTypeService>();
 			services.AddTransient<IActorService, ActorService>();
 			services.AddTransient<IUserService, UserService>();
+			services.AddTransient<ICommentsService, CommentsService>();
 
 
 			var appSettings = _configuration.GetSection("AppSettings");

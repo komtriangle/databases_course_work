@@ -15,5 +15,6 @@
 		public MediaFileDTO[] MediaFiles { get; set; }
 		public GenreDTO[] Genres { get; set; }
 		public FilmPersonDTO[] FilmPeople { get; set; }
+		public CommentDTO[] Comments { get; set; }
 	}
 }

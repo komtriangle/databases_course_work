@@ -33,6 +33,7 @@ namespace FilmsApp.Data
 		public DbSet<User> Users { get; set; }
 		public DbSet<Role> Roles { get; set; }
 		public DbSet<UserRoles> UserRoles { get; set; }
+		public DbSet<Comment> Comments { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
@@ -56,6 +57,7 @@ namespace FilmsApp.Data
 			builder.ApplyConfiguration(new FilmPersonConfiguration());
 			builder.ApplyConfiguration(new UserConfiguration());
 			builder.ApplyConfiguration(new UserRolesConfiguration());
+			builder.ApplyConfiguration(new CommentConfiguration());
 		}
 	}
 }

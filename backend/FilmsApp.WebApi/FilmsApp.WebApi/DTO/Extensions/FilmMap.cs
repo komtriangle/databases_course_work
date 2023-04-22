@@ -31,9 +31,11 @@ namespace FilmsApp.WebApi.DTO.Extensions
 				FilmPeople = film.People?
 				.Select(x => x?.ToDTO())
 				.Where(x => x != null)
+				.ToArray(),
+				Comments = film.Comments
+				.Select(x => x?.ToDTO())
+				.Where (x => x != null)
 				.ToArray()
-
-
 			};
 		}
 	}

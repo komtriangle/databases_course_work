@@ -1,4 +1,6 @@
-﻿namespace FilmsApp.Data.Entities
+﻿using FilmsApp.Data.Postgres.Entities;
+
+namespace FilmsApp.Data.Entities
 {
 	public class Film
 	{
@@ -24,6 +26,7 @@
 		public virtual ICollection<FilmMediaFile> MediaFiles { get; set; }
 		public virtual ICollection<FilmGenre> Genres { get; set; }
 		public virtual ICollection<FilmPerson> People { get; set; }
+		public virtual ICollection<Comment> Comments { get; set; }
 
 		public Film()
 		{
@@ -31,6 +34,7 @@
 			MediaFiles = new HashSet<FilmMediaFile>();
 			Genres = new HashSet<FilmGenre>();
 			People = new HashSet<FilmPerson>();
+			Comments = new HashSet<Comment>();
 		}
 
 

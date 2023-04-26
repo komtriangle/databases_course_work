@@ -4,6 +4,7 @@ using FilmsApp.Data.Postgres.Entities;
 using FilmsApp.WebApi.DTO;
 using FilmsApp.WebApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FilmsApp.WebApi.Services
 {
@@ -42,10 +43,15 @@ namespace FilmsApp.WebApi.Services
 					UserId = commentDto.UserId,
 					Text = commentDto.Text,
 					Stars = commentDto.Stars,
-					FilmId = commentDto.FilmId
 				};
 
+				film.Comments.Add(comment);
+
 				await context.Comments.AddAsync(comment);
+
+				double rating = film.Comments.Average(x => x.Stars);
+
+				film.Rating = rating;
 
 				await context.SaveChangesAsync();
 

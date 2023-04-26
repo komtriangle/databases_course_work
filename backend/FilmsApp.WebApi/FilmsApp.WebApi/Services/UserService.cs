@@ -46,7 +46,9 @@ namespace FilmsApp.WebApi.Services
 			{
 				using(FilmsContext context = _dbContextFactory.CreateDbContext())
 				{
-					return await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+					return await context.Users
+						.Include(x => x.Roles)
+						.FirstOrDefaultAsync(u => u.Email == email);
 				}
 			}
 			catch(Exception ex)

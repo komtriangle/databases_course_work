@@ -27,8 +27,10 @@ namespace FilmsApp.WebApi.Controllers
 		{
 			return Ok(new
 			{
-				UserId = User.FindFirst("UserId")?.Value,
-				Roles = (User.FindFirst("RolesId")?.Value ?? string.Empty).Split(',').ToArray()
+				UserId = int.Parse(User.FindFirst("UserId")?.Value),
+				Roles = (User.FindFirst("RolesId")?.Value ?? string.Empty).Split(',')
+					.Select(int.Parse)
+					.ToArray()
 			});
 		}
 

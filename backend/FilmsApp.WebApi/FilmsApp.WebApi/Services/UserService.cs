@@ -8,6 +8,7 @@ namespace FilmsApp.WebApi.Services
 	public class UserService : IUserService
 	{
 		private readonly IDbContextFactory<FilmsContext> _dbContextFactory;
+		private const int usualUserId = 1;
 
 		public UserService(IDbContextFactory<FilmsContext> dbContextFactory)
 		{
@@ -21,6 +22,11 @@ namespace FilmsApp.WebApi.Services
 				using(FilmsContext context = _dbContextFactory.CreateDbContext())
 				{
 					var user = new User { Email = email };
+
+					user.Roles.Add(new UserRoles()
+					{
+						RoleId = 1
+					});
 
 					await context.Users.AddAsync(user);
 					await context.SaveChangesAsync();

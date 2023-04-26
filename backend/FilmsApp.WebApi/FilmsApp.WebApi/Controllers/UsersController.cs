@@ -21,11 +21,15 @@ namespace FilmsApp.WebApi.Controllers
 				?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		[HttpGet("GetId")]
+		[HttpGet("GetUserInfo")]
 		[Authorize]
-		public async Task<IActionResult> GetUserId()
+		public async Task<IActionResult> GetUserInfo()
 		{
-			return Ok(User.FindFirst("Id")?.Value);
+			return Ok(new
+			{
+				UserId = User.FindFirst("Id")?.Value,
+				Roles = (User.FindFirst("Roles")?.Value ?? string.Empty).Split(',').ToArray()
+			});
 		}
 
 

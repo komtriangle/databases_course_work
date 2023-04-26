@@ -53,18 +53,23 @@ namespace FilmsApp.WebApi.Middleware
                         settings).Result;
 
                 int userId;
+                string roles = string.Empty;
                 var user = await _userService.GetUserAsync(payload.Email);
 
                 if(user == null)
                 {
                     userId =await _userService.CreateUserAsync(payload.Email);
-                }
+                    roles = "1";
+
+				}
                 else
                 {
                     userId = user.Id;
+                    roles = string.Join(',', user.Roles.Select(x => x.Id));
                 }
 
-                var claims = new[] { new Claim("Email", payload.Email), new Claim("Id", userId.ToString())  };
+                var claims = new[] { new Claim("Email", payload.Email), new Claim("UserId", userId.ToString()), 
+                    new Claim("RolesId", roles)  };
                 var identity = new ClaimsIdentity(claims, Scheme.Name);
                 var principal = new ClaimsPrincipal(identity);
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);

@@ -30,12 +30,12 @@ namespace FilmsApp.Data.EntitiesConfiguration
 			builder
 				.HasOne(x => x.MediaFile)
 				.WithMany(x => x.People)
-				.HasForeignKey(x => x.PersonId);
+				.HasForeignKey(x => x.MediaaFileId);
 
 			builder
 				.HasOne(x => x.Person)
 				.WithMany(x => x.MediaFiles)
-				.HasForeignKey(x => x.MediaaFileId);
+				.HasForeignKey(x => x.PersonId);
 		}
 	}
 }
